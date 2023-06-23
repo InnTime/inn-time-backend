@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 from config import DevelopmentConfig
+from app.admin import AdminView
 
 db = SQLAlchemy()
 
@@ -37,19 +38,22 @@ def create_app():
     from app.blueprints.users.views import users
     from app.blueprints.electives.views import electives
 
-    from app.blueprints.users.models import User
-    from app.blueprints.courses.models import Course, Group, CoursesDistribution
-    from app.blueprints.electives.models import Elective, ElectivesDistribution
-
     app.register_blueprint(courses)
     app.register_blueprint(electives)
     app.register_blueprint(users)
 
-    admin.add_view(ModelView(Course, db.session))
-    admin.add_view(ModelView(Elective, db.session))
-    admin.add_view(ModelView(User, db.session))
-    admin.add_view(ModelView(Group, db.session))
-    admin.add_view(ModelView(CoursesDistribution, db.session))
-    admin.add_view(ModelView(ElectivesDistribution, db.session))
+    from app.blueprints.users.models import User
+    from app.blueprints.courses.models import Course, Group, CoursesDistribution
+    from app.blueprints.electives.models import Elective, ElectivesDistribution
+    from app.blueprints.courses.admin import CourseDistributionView
+    from app.blueprints.electives.admin import ElectiveDistributionView
+    from app.blueprints.users.admin import UserView
+
+    admin.add_view(AdminView(Course, db.session))
+    admin.add_view(AdminView(Elective, db.session))
+    admin.add_view(UserView(User, db.session))
+    admin.add_view(AdminView(Group, db.session))
+    admin.add_view(CourseDistributionView(CoursesDistribution, db.session))
+    admin.add_view(ElectiveDistributionView(ElectivesDistribution, db.session))
 
     return app

@@ -14,3 +14,6 @@ class User(UserMixin, db.Model):
     group = db.relationship("Group", back_populates='users')
 
     electives = db.relationship('ElectivesDistribution', back_populates='user')
+
+    def __str__(self):
+        return self.email

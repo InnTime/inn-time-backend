@@ -34,13 +34,13 @@ def register():
 
     email = data.get('email')
     password = data.get('password')
-    group = data.get('group')
+    group_id = data.get('group_id')
 
     if User.query.filter_by(email=email).first():
         jsonify({'message': 'User with such an email exists'}), 400
 
     hashed_password = generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password, group=group)  # fixme
+    new_user = User(email=email, password=hashed_password, group_id=group_id)  # fixme
 
     db.session.add(new_user)  # fixme should we handle exceptions here?
     db.session.commit()

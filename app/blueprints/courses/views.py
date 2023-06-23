@@ -12,6 +12,7 @@ def get():
     current_user = get_jwt_identity()
     user_group = current_user.group_id
     user_courses = Course.query.filter_by(group_id=user_group).all()
+    # TODO: add day of week
     result = [{
         'id': course.id,
         'name': course.course_name,

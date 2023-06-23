@@ -3,11 +3,14 @@ from flask_login import UserMixin
 from app import db
 
 
-users_courses_table = db.Table(
-    "users_courses_table",
-    db.Column("user_id", db.Integer, db.ForeignKey("user_table.id")),
-    db.Column("course_id", db.Integer, db.ForeignKey("course_table.id")),
-)
+class UsersCourses(db.Model):
+    __tablename__ = 'users_courses_table'
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user_table.id"), primary_key=True)
+    user = db.relationship('User', back_populates='users_courses')
+
+    course_id = db.Column(db.Integer, db.ForeignKey("course_table.id"), primary_key=True)
+    course = db.relationship('Course', back_populates='users_courses')
 
 
 class User(UserMixin, db.Model):
@@ -19,4 +22,4 @@ class User(UserMixin, db.Model):
 
     group_id = db.Column(db.Integer, db.ForeignKey("group_table.id"))
     group = db.relationship("Group", back_populates='users')
-    courses = db.relationship('Course', secondary=users_courses_table)
+    users_courses = db.relationship("UsersCourses", back_populates='user')

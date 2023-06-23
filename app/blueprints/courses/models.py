@@ -4,26 +4,35 @@ from app import db
 
 
 class Group(db.Model):
-
     __tablename__ = 'groups'
 
     id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(10), unique=True, nullable=False)
     group_year = db.Column(db.Integer)
 
-    courses = db.relationship('CourseGroup', back_populates='course')
+    users = db.relationship('User', back_populates='group')
+    courses = db.relationship('CoursesDistribution', back_populates='group')
 
 
 class Course(db.Model):
-
     __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String(50), nullable=False)
+    course_name = db.Column(db.String(50), unique=True, nullable=False)
     classroom = db.Column(db.Integer)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
-    day_of_week = db.Column(Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'))
-    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
+    day_of_week = db.Column(Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                                 'Friday', 'Saturday', 'Sunday', name='days_of_week'))
 
+    groups = db.relationship('CoursesDistribution', back_populates='course')
+
+
+class CoursesDistribution(db.Model):
+    __tablename__ = 'courses_distribution'
+
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id', ondelete='CASCADE'), primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), primary_key=True)
+
+    course = db.relationship('Course', back_populates='groups')
     group = db.relationship('Group', back_populates='courses')

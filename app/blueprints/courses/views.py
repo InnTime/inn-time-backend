@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app.blueprints.courses.models import Course
+from app.blueprints.courses.models import Course, CoursesDistribution
 
 courses = Blueprint('courses', __name__, )
 
@@ -10,8 +10,8 @@ courses = Blueprint('courses', __name__, )
 @jwt_required()
 def get():
     current_user = get_jwt_identity()
-    user_group = current_user.group_id
-    user_courses = Course.query.filter_by(group_id=user_group).all()
+    courses_id = CoursesDistribution.query.filter_by(group_id=current_user.group_id).all()
+    user_courses = [Course.query.filter_by(id=course_id).first() for course_id in courses_id]
     result = [{
         'id': course.id,
         'name': course.course_name,

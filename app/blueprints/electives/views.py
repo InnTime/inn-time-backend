@@ -27,7 +27,7 @@ def get_user_electives():
 
 
 @electives.route('/get_electives', methods=['GET'])
-def get_user_electives():
+def get_electives():
     all_electives = Elective.query.all()
     result = [{
         'id': elective.id,

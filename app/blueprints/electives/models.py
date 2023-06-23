@@ -12,6 +12,9 @@ class Elective(db.Model):
 
     users = db.relationship('ElectivesDistribution', back_populates='elective')
 
+    def __str__(self):
+        return self.elective_name
+
 
 class ElectivesDistribution(db.Model):
     __tablename__ = 'electives_distribution'

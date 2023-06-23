@@ -13,6 +13,9 @@ class Group(db.Model):
     users = db.relationship('User', back_populates='group')
     courses = db.relationship('CoursesDistribution', back_populates='group')
 
+    def __str__(self):
+        return self.group_name
+
 
 class Course(db.Model):
     __tablename__ = 'courses'
@@ -26,6 +29,9 @@ class Course(db.Model):
                                  'Friday', 'Saturday', 'Sunday', name='days_of_week'))
 
     groups = db.relationship('CoursesDistribution', back_populates='course')
+
+    def __str__(self):
+        return self.course_name
 
 
 class CoursesDistribution(db.Model):

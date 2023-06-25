@@ -26,7 +26,7 @@ class Course(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day_of_week = db.Column(Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday',
-                                 'Friday', 'Saturday', 'Sunday', name='days_of_week'))
+                                 'Friday', 'Saturday', 'Sunday', name='days_of_week_enum'))
 
     groups = db.relationship('CoursesDistribution', back_populates='course')
 

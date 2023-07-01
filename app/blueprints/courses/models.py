@@ -8,7 +8,9 @@ class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(10), unique=True, nullable=False)
-    group_year = db.Column(db.Integer)
+    type = db.Column(Enum('B', 'M', name='group_type_enum'))
+    year = db.Column(db.Integer)
+    number = db.Column(db.Integer)
 
     users = db.relationship('User', back_populates='group')
     courses = db.relationship('CoursesDistribution', back_populates='group')
@@ -23,6 +25,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(50), unique=True, nullable=False)
     classroom = db.Column(db.Integer)
+    teacher = db.Column(db.String(50))
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day_of_week = db.Column(Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday',

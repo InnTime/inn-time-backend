@@ -7,6 +7,7 @@ class Elective(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     elective_name = db.Column(db.String(50), unique=True, nullable=False)
     classroom = db.Column(db.Integer)
+    teacher = db.Column(db.String(50))
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
 

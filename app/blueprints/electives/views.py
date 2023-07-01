@@ -19,10 +19,10 @@ def get_user_electives():
         'id': elective.id,
         'name': elective.course_name,
         'room': elective.classroom,
+        'teacher': elective.teacher,
         'start_time': elective.start_time,
         'end_time': elective.end_time,
     } for elective in user_electives]
-
     return jsonify(result)
 
 
@@ -31,8 +31,9 @@ def get_electives():
     all_electives = Elective.query.all()
     result = [{
         'id': elective.id,
-        'name': elective.course_name,
+        'name': elective.elective_name,
         'room': elective.classroom,
+        'teacher': elective.teacher,
         'start_time': elective.start_time,
         'end_time': elective.end_time,
     } for elective in all_electives]

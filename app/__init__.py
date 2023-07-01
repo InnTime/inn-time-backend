@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 from app.admin import AdminView
 from config import DevelopmentConfig
@@ -13,6 +14,7 @@ login_manager = LoginManager()
 jwt_manager = JWTManager()
 admin = Admin()
 migrate = Migrate()
+cors = CORS()
 
 
 def create_app():
@@ -32,6 +34,7 @@ def initialize_extensions(app):
     migrate.init_app(app, db)
     jwt_manager.init_app(app)
     admin.init_app(app)
+    cors.init_app(app)
 
 
 def register_blueprints(app):

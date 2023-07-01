@@ -4,6 +4,7 @@ from flask_login import login_user, login_required, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import login_manager, db
+from app.blueprints.courses.models import Group
 from app.blueprints.users.models import User
 
 users = Blueprint('users', __name__, )
@@ -32,20 +33,50 @@ def login():
 def register():
     data = request.json
 
+    try:
+        group_id = int(data.get('group'))
+    except ValueError:
+        return jsonify({'message': 'group_id is not an integer'}), 400
+
+    if not Group.query.filter_by(id=group_id).first():
+        jsonify({'message': 'There is no group with such an id'}), 400
+
     email = data.get('email')
     password = data.get('password')
-    group = data.get('group')
 
     if User.query.filter_by(email=email).first():
         jsonify({'message': 'User with such an email exists'}), 400
 
     hashed_password = generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password, group=group)  # fixme
+    new_user = User(email=email, password=hashed_password, group_id=group_id)
 
-    db.session.add(new_user)  # fixme should we handle exceptions here?
+    db.session.add(new_user)
     db.session.commit()
 
     return jsonify({'message': 'Registration successful'}), 200
+
+
+@users.route('/update_user/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.json
+
+    password = data.get('password')
+    try:
+        group_id = int(data.get('group'))
+    except ValueError:
+        return jsonify({'message': 'group_id is not an integer'}), 400
+
+    if not Group.query.filter_by(id=group_id).first():
+        jsonify({'message': 'There is no group with such an id'}), 400
+
+    user.email = data.get('email')
+    user.group_id = group_id
+    user.password = generate_password_hash(password)
+
+    db.session.commit()
+
+    return jsonify({'message': 'User information updated successfully'}), 200
 
 
 @users.route('/logout', methods=['POST'])

@@ -19,8 +19,8 @@ def get_user_courses():
         'name': course.course_name,
         'room': course.classroom,
         'teacher': course.teacher,
-        'start_time': course.start_time,
-        'end_time': course.end_time,
+        'start_time': str(course.start_time),
+        'end_time': str(course.end_time),
         'day_of_week': course.day_of_week
     } for course in user_courses]
 
@@ -28,15 +28,15 @@ def get_user_courses():
 
 
 @courses.route('/get_courses', methods=['GET'])
-def get_all_courses():
+def get_courses():
     all_courses = Course.query.all()
     result = [{
         'id': course.id,
         'name': course.course_name,
         'room': course.classroom,
         'teacher': course.teacher,
-        'start_time': course.start_time,
-        'end_time': course.end_time,
+        'start_time': str(course.start_time),
+        'end_time': str(course.end_time),
         'day_of_week': course.day_of_week
     } for course in all_courses]
 

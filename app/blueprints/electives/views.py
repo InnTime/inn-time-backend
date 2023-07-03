@@ -20,8 +20,8 @@ def get_user_electives():
         'name': elective.course_name,
         'room': elective.classroom,
         'teacher': elective.teacher,
-        'start_time': elective.start_time,
-        'end_time': elective.end_time,
+        'start_time': str(elective.start_time),
+        'end_time': str(elective.end_time),
     } for elective in user_electives]
     return jsonify(result)
 
@@ -34,8 +34,8 @@ def get_electives():
         'name': elective.elective_name,
         'room': elective.classroom,
         'teacher': elective.teacher,
-        'start_time': elective.start_time,
-        'end_time': elective.end_time,
+        'start_time': str(elective.start_time),
+        'end_time': str(elective.end_time),
     } for elective in all_electives]
 
     return jsonify(result)

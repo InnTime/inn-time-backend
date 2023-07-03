@@ -26,10 +26,11 @@ class Course(db.Model):
     course_name = db.Column(db.String(50), unique=True, nullable=False)
     classroom = db.Column(db.Integer)
     teacher = db.Column(db.String(50))
+    type = db.Column(Enum('lec', 'tut', 'lab', name='course_type_enum'))
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day_of_week = db.Column(Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday',
-                                 'Friday', 'Saturday', 'Sunday', name='days_of_week_enum'))
+                                 'Friday', 'Saturday', 'Sunday', name='days_of_week_enum'), nullable=False)
 
     groups = db.relationship('CoursesDistribution', back_populates='course')
 

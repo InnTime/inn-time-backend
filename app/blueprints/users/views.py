@@ -34,7 +34,7 @@ def register():
     data = request.json
 
     try:
-        group_id = int(data.get('group'))
+        group_id = int(data.get('group_id'))
     except ValueError:
         return jsonify({'message': 'group_id is not an integer'}), 400
 
@@ -63,7 +63,7 @@ def update_user(user_id):
 
     password = data.get('password')
     try:
-        group_id = int(data.get('group'))
+        group_id = int(data.get('group_id'))
     except ValueError:
         return jsonify({'message': 'group_id is not an integer'}), 400
 

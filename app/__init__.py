@@ -14,7 +14,7 @@ login_manager = LoginManager()
 jwt_manager = JWTManager()
 admin = Admin()
 migrate = Migrate()
-cors = CORS()
+cors = CORS(supports_credentials=True)
 
 
 def create_app():

@@ -7,7 +7,7 @@ class Group(db.Model):
     __tablename__ = 'groups'
 
     id = db.Column(db.Integer, primary_key=True)
-    group_name = db.Column(db.String(10), unique=True, nullable=False)
+    group_name = db.Column(db.String(15), unique=True, nullable=False)
     type = db.Column(Enum('B', 'M', name='group_type_enum'))
     year = db.Column(db.Integer)
     number = db.Column(db.Integer)

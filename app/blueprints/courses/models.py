@@ -23,7 +23,7 @@ class Course(db.Model):
     __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String(50), unique=True, nullable=False)
+    course_name = db.Column(db.String(50), nullable=False)
     classroom = db.Column(db.Integer)
     teacher = db.Column(db.String(50))
     type = db.Column(Enum('lec', 'tut', 'lab', name='course_type_enum'))

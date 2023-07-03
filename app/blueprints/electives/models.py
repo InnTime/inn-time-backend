@@ -7,7 +7,7 @@ class Elective(db.Model):
     __tablename__ = 'electives'
 
     id = db.Column(db.Integer, primary_key=True)
-    elective_name = db.Column(db.String(50), unique=True, nullable=False)
+    elective_name = db.Column(db.String(50), nullable=False)
     classroom = db.Column(db.Integer)
     teacher = db.Column(db.String(50))
     type = db.Column(Enum('lec', 'tut', 'lab', name='elective_type_enum'))

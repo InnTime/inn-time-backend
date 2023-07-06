@@ -35,7 +35,7 @@ class Course(db.Model):
     groups = db.relationship('CoursesDistribution', back_populates='course')
 
     def __str__(self):
-        return self.course_name
+        return f'{self.course_name} - {self.type} - {self.day_of_week}'
 
 
 class CoursesDistribution(db.Model):

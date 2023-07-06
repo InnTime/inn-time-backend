@@ -20,6 +20,7 @@ def get_user_electives():
         'name': elective.course_name,
         'room': elective.classroom,
         'teacher': elective.teacher,
+        'type': elective.type,
         'start_time': str(elective.start_time),
         'end_time': str(elective.end_time),
     } for elective in user_electives]
@@ -34,6 +35,7 @@ def get_electives():
         'name': elective.elective_name,
         'room': elective.classroom,
         'teacher': elective.teacher,
+        'type': elective.type,
         'start_time': str(elective.start_time),
         'end_time': str(elective.end_time),
     } for elective in all_electives]
@@ -46,18 +48,20 @@ def get_electives():
 def set_elective():
     current_user = get_jwt_identity()
 
-    elective_id = request.json.get('elective_id')
-    elective = Elective.query.filter_by(id=elective_id).first()
+    elective_name = request.json.get('elective_name')
+    new_user_electives = Elective.query.filter_by(elective_name=elective_name).all()
 
-    if elective is None:
-        return jsonify({'error': 'Invalid elective ID'}), 404
+    if new_user_electives is None:
+        return jsonify({'error': 'Invalid elective name'}), 404
 
-    existing_relation = ElectivesDistribution.query.filter_by(user_id=current_user.id, elective_id=elective_id).first()
+    existing_relation = ElectivesDistribution.query.filter_by(user_id=current_user.id,
+                                                              elective_id=new_user_electives[0].id).first()
     if existing_relation:
         return jsonify({'error': 'User already has this elective'}), 400
 
-    new_relation = ElectivesDistribution(user_id=current_user.id, elective_id=elective_id)
-    db.session.add(new_relation)
+    for elective in new_user_electives:
+        new_relation = ElectivesDistribution(user_id=current_user.id, elective_id=elective.id)
+        db.session.add(new_relation)
     db.session.commit()
 
-    return jsonify({'message': 'Elective set successfully'})
+    return jsonify({'message': 'Elective set successfully'}), 200

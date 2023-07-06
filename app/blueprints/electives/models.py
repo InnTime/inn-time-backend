@@ -17,7 +17,7 @@ class Elective(db.Model):
     users = db.relationship('ElectivesDistribution', back_populates='elective')
 
     def __str__(self):
-        return self.elective_name
+        return f'{self.elective_name} - {self.type} - {self.start_time.date()}'
 
 
 class ElectivesDistribution(db.Model):

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -24,7 +24,7 @@ def login():
     if user and check_password_hash(user.password, password):
         login_user(user)
         access_token = create_access_token(identity=str(user.id))
-        return jsonify({'access_token': access_token}), 200
+        return jsonify({'accessToken': access_token}), 200
 
     return jsonify({'message': 'Invalid email or password'}), 401
 
@@ -33,22 +33,17 @@ def login():
 def register():
     data = request.json
 
-    try:
-        group_id = int(data.get('group_id'))
-    except ValueError:
-        return jsonify({'message': 'group_id is not an integer'}), 400
-
-    if not Group.query.filter_by(id=group_id).first():
-        jsonify({'message': 'There is no group with such an id'}), 400
-
     email = data.get('email')
     password = data.get('password')
+
+    if not email or not password:
+        jsonify({'message': 'Some information is missing'}), 400
 
     if User.query.filter_by(email=email).first():
         jsonify({'message': 'User with such an email exists'}), 400
 
     hashed_password = generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password, group_id=group_id)
+    new_user = User(email=email, password=hashed_password)
 
     db.session.add(new_user)
     db.session.commit()
@@ -56,22 +51,40 @@ def register():
     return jsonify({'message': 'Registration successful'}), 200
 
 
-@users.route('/update_user/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    user = User.query.get_or_404(user_id)
+@users.route('/set_user_group', methods=['PUT'])
+@jwt_required()
+def set_user_group():
+    user = get_jwt_identity()
     data = request.json
 
-    password = data.get('password')
+    group_id = data.get('group_id')
+    if not group_id:
+        jsonify({'message': 'Group ID cannot be null'}), 400
+
     try:
-        group_id = int(data.get('group_id'))
+        group_id = int(group_id)
     except ValueError:
-        return jsonify({'message': 'group_id is not an integer'}), 400
+        return jsonify({'message': 'Group ID is not an integer'}), 400
 
     if not Group.query.filter_by(id=group_id).first():
         jsonify({'message': 'There is no group with such an id'}), 400
 
-    user.email = data.get('email')
     user.group_id = group_id
+    db.session.commit()
+
+    return jsonify({'message': 'Group set successfully'}), 200
+
+
+@users.route('/update_user', methods=['PUT'])
+@jwt_required()
+def update_user():
+    user = get_jwt_identity()
+    data = request.json
+
+    password = data.get('password')
+    if not password:
+        jsonify({'message': 'Password cannot be null'}), 400
+
     user.password = generate_password_hash(password)
 
     db.session.commit()

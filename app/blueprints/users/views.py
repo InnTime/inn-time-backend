@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_login import login_user, login_required, logout_user
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import login_manager, db
+from app import login_manager, db, jwt_manager
 from app.blueprints.courses.models import Group
 from app.blueprints.users.models import User
 
@@ -22,8 +21,7 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and check_password_hash(user.password, password):
-        login_user(user)
-        access_token = create_access_token(identity=str(user.id))
+        access_token = create_access_token(identity=user.id)
         return jsonify({'accessToken': access_token}), 200
 
     return jsonify({'message': 'Invalid email or password'}), 401
@@ -54,7 +52,9 @@ def register():
 @users.route('/set_user_group', methods=['PUT'])
 @jwt_required()
 def set_user_group():
-    user = get_jwt_identity()
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
     data = request.json
 
     group_id = data.get('group_id')
@@ -78,7 +78,9 @@ def set_user_group():
 @users.route('/update_user', methods=['PUT'])
 @jwt_required()
 def update_user():
-    user = get_jwt_identity()
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
     data = request.json
 
     password = data.get('password')
@@ -93,7 +95,9 @@ def update_user():
 
 
 @users.route('/logout', methods=['POST'])
-@login_required
+@jwt_required()
 def logout():
-    logout_user()
-    return jsonify({'message': 'Logged out successfully'}), 200  # fixme maybe we have to delete tokens after that
+    jti = get_jwt()['jti']
+    jwt_manager.revoke_token(jti)
+
+    return jsonify({'message': 'Logged out successfully'}), 200  # unset jwt cookies?

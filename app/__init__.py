@@ -12,29 +12,32 @@ from config import DevelopmentConfig
 db = SQLAlchemy()
 login_manager = LoginManager()
 jwt_manager = JWTManager()
-admin = Admin()
-migrate = Migrate()
-cors = CORS(supports_credentials=True)
 
 
 def create_app():
+    admin = Admin()
+    migrate = Migrate()
+    cors = CORS(supports_credentials=True)
+
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
 
-    initialize_extensions(app)
-    register_blueprints(app)
-    register_admin_views()
-
-    return app
-
-
-def initialize_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
     jwt_manager.init_app(app)
     admin.init_app(app)
     cors.init_app(app)
+
+    # initialize_extensions(app)
+    register_blueprints(app)
+    register_admin_views(admin)
+
+    return app
+
+
+def initialize_extensions(app):
+    pass
 
 
 def register_blueprints(app):
@@ -47,7 +50,7 @@ def register_blueprints(app):
     app.register_blueprint(users)
 
 
-def register_admin_views():
+def register_admin_views(admin):
     from app.blueprints.users.models import User
     from app.blueprints.courses.models import Course, Group, CoursesDistribution
     from app.blueprints.electives.models import Elective, ElectivesDistribution

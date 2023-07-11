@@ -24,7 +24,7 @@ def get_user_courses():
         'day_of_week': course.day_of_week
     } for course in user_courses]
 
-    return jsonify(result)
+    return jsonify(result), 200
 
 
 @courses.route('/get_courses', methods=['GET'])
@@ -40,7 +40,7 @@ def get_courses():
         'day_of_week': course.day_of_week
     } for course in all_courses]
 
-    return jsonify(result)
+    return jsonify(result), 200
 
 
 @courses.route('/get_groups', methods=['GET'])
@@ -54,4 +54,4 @@ def get_all_groups():
         'number': group.number
     } for group in all_groups]
 
-    return jsonify(result)
+    return jsonify(result), 200

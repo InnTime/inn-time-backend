@@ -2,7 +2,16 @@ name: tests
 on: [push]
 
 jobs:
-  build:
+  test:
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: inn_time_db_password
+          POSTGRES_DB: inn_time
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,30 +23,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-  tests:
-    needs: build
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - "5432:5432"
-        env:
-          POSTGRES_DB: inn_time
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: inn_time_db_password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    env:
-      POSTGRES_DB: inn_time
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: inn_time_db_password
-      RAILS_ENV: test
-      DATABASE_URL: "postgresql://postgres:inn_time_db_password@localhost:5432/inn_time"
-    runs-on: ubuntu-latest
-    steps:
     - name: Test with pytest
-      run: pytest
+      run: |
+        python -m pytest
   

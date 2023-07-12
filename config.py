@@ -15,7 +15,7 @@ class BaseConfig:
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DEVELOPMENT_DATABASE_URI') or 'postgresql://postgres:inn_time_db_password@localhost:5432/inn_time'
+        'DEVELOPMENT_DATABASE_URI') or 'postgresql://postgres:inn_time_db_password@db:5432/inn_time'
 
 
 class TestingConfig(BaseConfig):

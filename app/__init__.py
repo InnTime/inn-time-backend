@@ -1,43 +1,41 @@
 from flask import Flask
 from flask_admin import Admin
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 
 from app.admin import AdminView
 from config import DevelopmentConfig
 
 db = SQLAlchemy()
+migrate = Migrate()
 login_manager = LoginManager()
 jwt_manager = JWTManager()
+cors = CORS(supports_credentials=True)
 
 
 def create_app():
     admin = Admin()
-    migrate = Migrate()
-    cors = CORS(supports_credentials=True)
 
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
 
-    db.init_app(app)
-    login_manager.init_app(app)
-    migrate.init_app(app, db)
-    jwt_manager.init_app(app)
-    admin.init_app(app)
-    cors.init_app(app)
-
-    # initialize_extensions(app)
+    initialize_extensions(app, admin)
     register_blueprints(app)
     register_admin_views(admin)
 
     return app
 
 
-def initialize_extensions(app):
-    pass
+def initialize_extensions(app, admin):
+    db.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
+    jwt_manager.init_app(app)
+    admin.init_app(app)
+    cors.init_app(app)
 
 
 def register_blueprints(app):

@@ -10,7 +10,7 @@ class Elective(db.Model):
     elective_name = db.Column(db.String(50), nullable=False)
     classroom = db.Column(db.Integer)
     teacher = db.Column(db.String(50))
-    type = db.Column(Enum('lec', 'tut', 'lab', name='elective_type_enum'))
+    type = db.Column(Enum('bs-tech', 'ms-tech', 'hum', name='elective_type_enum'))
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
 

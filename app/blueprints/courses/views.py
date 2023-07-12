@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.blueprints.courses.models import Course, CoursesDistribution, Group
+from app.blueprints.users.models import User
 
 courses = Blueprint('courses', __name__, )
 
@@ -9,8 +10,10 @@ courses = Blueprint('courses', __name__, )
 @courses.route('/get_user_courses', methods=['GET'])
 @jwt_required()
 def get_user_courses():
-    current_user = get_jwt_identity()
-    courses_id = CoursesDistribution.query.filter_by(group_id=current_user.group_id).with_entities(
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    courses_id = CoursesDistribution.query.filter_by(group_id=user.group_id).with_entities(
         CoursesDistribution.course_id).all()
 
     user_courses = [Course.query.filter_by(id=course_id[0]).first() for course_id in courses_id]
@@ -19,6 +22,7 @@ def get_user_courses():
         'name': course.course_name,
         'room': course.classroom,
         'teacher': course.teacher,
+        'type': course.type,
         'start_time': str(course.start_time),
         'end_time': str(course.end_time),
         'day_of_week': course.day_of_week
@@ -35,6 +39,7 @@ def get_courses():
         'name': course.course_name,
         'room': course.classroom,
         'teacher': course.teacher,
+        'type': course.type,
         'start_time': str(course.start_time),
         'end_time': str(course.end_time),
         'day_of_week': course.day_of_week

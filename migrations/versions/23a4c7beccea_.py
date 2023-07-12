@@ -26,7 +26,7 @@ def upgrade():
                nullable=False)
 
     with op.batch_alter_table('electives', schema=None) as batch_op:
-        op.execute("CREATE TYPE elective_type_enum AS ENUM ('lec', 'tut', 'lab')")
+        op.execute("CREATE TYPE elective_type_enum AS ENUM ('bs-tech', 'ms-tech', 'hum')")
         batch_op.add_column(sa.Column('type', sa.Enum('lec', 'tut', 'lab', name='elective_type_enum'), nullable=True))
 
     # ### end Alembic commands ###

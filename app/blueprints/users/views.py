@@ -75,6 +75,28 @@ def set_user_group():
     return jsonify({'message': 'Group set successfully'}), 200
 
 
+@users.route('/get_user_group', methods=['GET'])
+@jwt_required()
+def get_user_group():
+    user_id = get_jwt_identity()
+    group_id = User.query.get(user_id).group_id
+
+    return jsonify(group_id), 200
+
+
+@users.route('/unset_user_group', methods=['PUT'])
+@jwt_required()
+def unset_user_group():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    user.group_id = None
+
+    db.session.commit()
+
+    return jsonify({'message': 'Group unset successfully'}), 200
+
+
 @users.route('/update_user', methods=['PUT'])
 @jwt_required()
 def update_user():

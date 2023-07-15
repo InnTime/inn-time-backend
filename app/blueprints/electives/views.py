@@ -19,8 +19,7 @@ def get_user_electives():
 
     user_electives = [Elective.query.filter_by(id=elective_id[0]).first() for elective_id in electives_id]
     result = [{
-        'id': elective.id,
-        'name': elective.course_name,
+        'name': elective.elective_name,
         'room': elective.classroom,
         'teacher': elective.teacher,
         'type': elective.type,
@@ -34,19 +33,16 @@ def get_user_electives():
 def get_electives():
     all_electives = Elective.query.distinct(Elective.elective_name)
     result = [{
-        'id': elective.id,
         'name': elective.elective_name,
-        'room': elective.classroom,
-        'teacher': elective.teacher,
         'type': elective.type,
     } for elective in all_electives]
 
     return jsonify(result)
 
 
-@electives.route('/set_elective', methods=['POST'])
+@electives.route('/set_user_elective', methods=['POST'])
 @jwt_required()
-def set_elective():
+def set_user_elective():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
@@ -67,3 +63,22 @@ def set_elective():
     db.session.commit()
 
     return jsonify({'message': 'Elective set successfully'}), 200
+
+
+@electives.route('/delete_user_elective', methods=['DELETE'])
+@jwt_required()
+def delete_user_elective():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    elective_name = request.json.get('elective_name')
+    electives_to_delete = Elective.query.filter_by(elective_name=elective_name).all()
+
+    if electives:
+        for elective in electives_to_delete:
+            ElectivesDistribution.query.filter_by(elective_id=elective.id, user_id=user.id).delete()
+        db.session.commit()
+    else:
+        return jsonify({'message': 'Elective not found'}), 400
+
+    return jsonify({'message': 'Elective deleted successfully'}), 200

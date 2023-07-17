@@ -7,7 +7,7 @@ app_dir = os.path.abspath(os.path.dirname(__file__))
 class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'SECRET_KEY'
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'JWT_SECRET_KEY'
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(weeks=2)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(weeks=1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CSRF_ENABLED = True
 
@@ -20,6 +20,7 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     DEBUG = True
+    TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'TESTING_DATABASE_URI') or 'postgresql://postgres:inn_time_db_password@db:5432/inn_time'
 

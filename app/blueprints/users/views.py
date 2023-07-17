@@ -8,6 +8,8 @@ from app.blueprints.users.models import User
 
 users = Blueprint('users', __name__, )
 
+blacklist = set()
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -116,10 +118,15 @@ def update_user():
     return jsonify({'message': 'User information updated successfully'}), 200
 
 
-@users.route('/logout', methods=['POST'])
+@jwt_manager.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    jti = jwt_payload['jti']
+    return jti in blacklist
+
+
+@users.route('/logout', methods=['DELETE'])
 @jwt_required()
 def logout():
     jti = get_jwt()['jti']
-    jwt_manager.revoke_token(jti)
-
-    return jsonify({'message': 'Logged out successfully'}), 200  # unset jwt cookies?
+    blacklist.add(jti)
+    return jsonify({"msg": "Successfully logged out"}), 200
